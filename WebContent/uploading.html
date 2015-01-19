@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<f:view>
+    <html lang="en">
+        <head>
+            <title>File upload test</title>
+        </head>
+        <body>
+            <h:form id="uploadForm" enctype="multipart/form-data">
+                <h:panelGrid columns="3">
+                    <h:outputLabel for="file" value="Select file" />
+                    <t:inputFileUpload id="file" value="#{myBean.uploadedFile}" required="true" />
+                    <h:message for="file" style="color: red;" />
+
+                    <h:panelGroup />
+                    <h:commandButton value="Submit" action="#{myBean.submit}" />
+                    <h:message for="uploadForm" infoStyle="color: green;" errorStyle="color: red;" />
+                </h:panelGrid>
+            </h:form>
+
+            <h:outputLink value="file/#{myBean.fileName}" rendered="#{myBean.fileName != null}">
+                Download back
+            </h:outputLink>
+        </body>
+    </html>
+</f:view>

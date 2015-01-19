@@ -1,0 +1,109 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head class="header">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Upload | Download Scenario File</title>
+        <h:outputStylesheet library="default" name="css/form.css" />
+
+
+    </h:head>
+    <h:body>
+        <div class="contr">
+            <h1>Thales SWIM Scenario</h1>
+        </div>
+        <div class="container">
+            <div class="contr">
+                <h2>Uploading the scenario file</h2>
+            </div>
+
+            <p:tabView>  
+                <p:tab title="Upload">
+                    <!-- Form enctype should be multipart/form-data -->
+                    <h:form id="inputForm" enctype="multipart/form-data">
+
+                        <div style="padding-top: 20px; padding-bottom: 20px;">
+                            <h:outputLabel for="fichier" 
+                                           id="image_file"
+                                           style="font: normal 12pt verdana, helvetica, sans-serif;color: blue; ">Click on the button below to select the scenario to upload 
+
+                            </h:outputLabel>
+
+                        </div>
+                        <div style="marging-bottom: 15px; marging-top: 20px">
+                            <h:inputFile id="file" label="file" value="#{inputBean.part}"
+                                         required="true" requiredMessage="File not selected !!">
+                                <!-- FileUploadValidator for file validation 
+    <f:validator validatorId="FileUploadValidator" />-->
+                            </h:inputFile>
+                            <h:message style="color: red" for="file" />
+                            <br />
+
+
+                            <h:commandButton id="submit" action="#{inputBean.uploadFile}"
+                                             value="upload file" style="text-align:center"
+                                             />
+
+                            <br />
+
+                            <!-- status message of file upload; rendered if message is set -->
+                            <SPAN style="color: red; padding-left: 170px"> <h:outputText
+                                    value="
+                                    #{inputBean.statusMessage}"
+                                    rendered="#{not empty inputBean.statusMessage}" />
+                            </SPAN> <br />
+
+                        </div>
+                        <div>
+                            <!--<p:inputTextarea style="width:300px;height:100px;" value="#{inputBean.inputTextList}" /> -->
+                            <p:dataList value="#{inputBean.inputTextList}" var="text" type="definition">  
+                                #{text}
+                            </p:dataList>
+
+                        </div>
+
+                    </h:form>
+
+                </p:tab>  
+                <p:tab title="Download">
+                    <div class="upload_form_cont">
+                        <h:form>
+
+                            <div class="requis" style="padding-top: 50px; padding-bottom: 20px;">
+                                <h:outputLabel for="fichier"
+                                               id="image_file"
+                                               style="font: normal 12pt verdana, helvetica, sans-serif; ">Click on the link below to download the scenario file 
+
+                                </h:outputLabel>
+                                <br />
+                            </div>
+                            <h:commandLink
+                                style="font: normal 12pt verdana, helvetica, sans-serif;color: blue; "
+                                id="getDownload" value="Download Files"
+                                action="#{fileDownloadBean.downLoad}">
+                            </h:commandLink>
+                            <div>
+                                <p:inputTextarea style="width:300px;height:100px;" id="textArea" /> 
+                            </div>
+                        </h:form>
+                    </div>
+
+                </p:tab>  
+                <p:tab title="Result">Result</p:tab>  
+            </p:tabView> 
+
+
+        </div>
+
+        <div class="container">
+            <div class="contr">
+                <!--<h2>Downloading the scenario file</h2> -->
+            </div>
+
+
+
+        </div>
+    </h:body>
+</html>
