@@ -7,7 +7,21 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Upload | Download Scenario File</title>
         <h:outputStylesheet library="default" name="css/form.css" />
+        <h:outputScript library="default" name="js/uploadScript.js"/>
+        <script type="text/javascript">
+            function start() {
+                this.progressInterval = setInterval(function () {
+                    pbClient.setValue(pbClient.getValue() + 10);
+                }, 2000);
+            }
 
+            function cancel() {
+                clearInterval(this.progressInterval);
+                pbClient.setValue(0);
+            }
+        </script>  
+
+        17	    <h:outputScript library="javax.faces" name="jsf.js"/>
 
     </h:head>
     <h:body>
@@ -21,50 +35,92 @@
 
             <p:tabView>  
                 <p:tab title="Upload">
-                    <!-- Form enctype should be multipart/form-data -->
-                    <h:form id="inputForm" enctype="multipart/form-data">
+                    <div class="upload_form_cont">
+                        <!-- Form enctype should be multipart/form-data -->
+                        <p:growl id="growl" />  
+                        <h:form id="inputForm" enctype="multipart/form-data" >
 
-                        <div style="padding-top: 20px; padding-bottom: 20px;">
-                            <h:outputLabel for="fichier" 
-                                           id="image_file"
-                                           style="font: normal 12pt verdana, helvetica, sans-serif;color: blue; ">Click on the button below to select the scenario to upload 
+                            <div style="padding-top: 20px; padding-bottom: 20px;">
+                                <h:outputLabel for="fichier" 
+                                               id="image_file"
+                                               style="font: normal 12pt verdana, helvetica, sans-serif;color: blue; ">Click on the button below to select the scenario to upload 
 
-                            </h:outputLabel>
+                                </h:outputLabel>
 
-                        </div>
-                        <div style="marging-bottom: 15px; marging-top: 20px">
-                            <h:inputFile id="file" label="file" value="#{inputBean.part}"
-                                         required="true" requiredMessage="File not selected !!">
-                                <!-- FileUploadValidator for file validation 
-    <f:validator validatorId="FileUploadValidator" />-->
-                            </h:inputFile>
-                            <h:message style="color: red" for="file" />
-                            <br />
+                            </div>
+                            <fieldset >
+                                <legend > Upload with file</legend>
+                                <div style="padding-top: 20px; padding-bottom: 20px;">
+                                    <h:inputFile id="file" label="file" value="#{inputBean.part}" 
+                                                 required="true" requiredMessage="File not selected !!"
+                                                 onchange="fileSelected()">
+                                        <!-- FileUploadValidator for file validation 
+            <f:validator validatorId="FileUploadValidator" />-->
+                                    </h:inputFile>
+                                    <h:message style="color: red" for="file" />
+                                    <br />
 
 
-                            <h:commandButton id="submit" action="#{inputBean.uploadFile}"
-                                             value="upload file" style="text-align:center"
-                                             />
 
-                            <br />
+                                    <p:commandButton id="submit" action="#{inputBean.uploadFile}"
+                                                     value="upload file" style="text-align:center"
+                                                     onclick="start();
+                                                             startButton1.disable()" widgetVar="startButton1" />
+
+                                    <p:commandButton value="Cancel" type="button"  
+                                                     onclick="cancel();
+                                                             startButton1.enable()" /> 
+
+                                    <p:progressBar widgetVar="pbClient" style="width:300px"/> 
+                                    <div id="fileName"></div>
+                                    <div id="fileSize"></div>
+                                    <div id="fileType"></div>
+
+
+
+                                    <!-- status message of file upload; rendered if message is set -->
+                                    <SPAN style="color: red; padding-left: 170px"> <h:outputText
+                                            value="
+                                            #{inputBean.statusMessage}"
+                                            rendered="#{not empty inputBean.statusMessage}" />
+                                    </SPAN> <br />
+
+                                </div>
+
+
+                            </fieldset>
+
+                        </h:form>
+                        <h:form>
+                            <div style="padding-top: 20px; padding-bottom: 20px;">
+                                <h:outputLabel for="fichier" 
+                                               id="image_file"
+                                               style="font: normal 12pt verdana, helvetica, sans-serif;color: blue;padding-top: 20px; padding-bottom: 20px; ">Type the scenario to upload 
+
+                                </h:outputLabel>
+
+                            </div>
+                            <div style = "width:auto;padding-bottom: 20px;" >
+                                <h:inputTextarea   id="textArea" value="#{inputBean.textArea}" rows="30" cols="110"/> > 
+                            </div>
 
                             <!-- status message of file upload; rendered if message is set -->
                             <SPAN style="color: red; padding-left: 170px"> <h:outputText
                                     value="
-                                    #{inputBean.statusMessage}"
-                                    rendered="#{not empty inputBean.statusMessage}" />
+                                    #{inputBean.statusUploadMessage}"
+                                    rendered="#{not empty inputBean.statusUploadMessage}" />
                             </SPAN> <br />
+                            <div style ="position:relative;left:85%;padding-bottom: 20px;">
+                                <h:commandButton id="submit" action="#{inputBean.writeFile()}"
+                                                 value="Upload file 2" style="text-align:center" 
+                                                 />
+                            </div>
 
-                        </div>
-                        <div>
-                            <!--<p:inputTextarea style="width:300px;height:100px;" value="#{inputBean.inputTextList}" /> -->
-                            <p:dataList value="#{inputBean.inputTextList}" var="text" type="definition">  
-                                #{text}
-                            </p:dataList>
 
-                        </div>
 
-                    </h:form>
+                        </h:form>
+                    </div>
+
 
                 </p:tab>  
                 <p:tab title="Download">
@@ -82,16 +138,42 @@
                             <h:commandLink
                                 style="font: normal 12pt verdana, helvetica, sans-serif;color: blue; "
                                 id="getDownload" value="Download Files"
-                                action="#{fileDownloadBean.downLoad}">
-                            </h:commandLink>
-                            <div>
-                                <p:inputTextarea style="width:300px;height:100px;" id="textArea" /> 
+                                action="#{fileDownloadBean.downLoad()}"                          
+
+                                >
+                            </h:commandLink > 
+                            <div  style="padding-top: 50px; padding-bottom: 20px;">
+                                <h:commandButton actionListener="#{fileDownloadBean.printIt()}" value="See the scenario"
+                                                 >
+
+                                </h:commandButton>
                             </div>
+
+                            <div>
+
+                                <p:dataList value="#{fileDownloadBean.inputTextList}" var="text" type="definition">  
+                                    #{text}
+                                </p:dataList>
+
+
+                            </div>
+
+
                         </h:form>
                     </div>
 
                 </p:tab>  
-                <p:tab title="Result">Result</p:tab>  
+                <p:tab title="Result">
+                    <div>
+
+  <!--<p:inputTextarea style="width:300px;height:100px;" value="#{inputBean.inputTextList}" /> -->
+                        <p:dataList value="#{inputBean.inputTextList}" var="text" type="definition">  
+                            #{text}
+                        </p:dataList>
+
+
+                    </div>
+                </p:tab>  
             </p:tabView> 
 
 
